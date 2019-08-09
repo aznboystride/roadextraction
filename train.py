@@ -54,7 +54,6 @@ for epoch in range(1, epochs+1):
         label_batch = mask.to(device=device, dtype=torch.float32)
         optimizer.zero_grad()
         output_batch = network(input_batch)
-        print(input_batch.shape, output_batch.shape, label_batch.shape)
         loss = criterion(output_batch, label_batch)
         loss.backward()
         optimizer.step()
