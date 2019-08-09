@@ -1,11 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.functional as F
+
 from functions.functions import DecoderBlock
+import torchvision
 
 
 class FCN(nn.Module):
-    def __init__(self, filters, is_deconv, in_, **kwargs):
+    def __init__(self, is_deconv, **kwargs):
         super().__init__()
         resnet = torchvision.models.resnet34(pretrained=True)       
       
@@ -14,9 +16,9 @@ class FCN(nn.Module):
 
         self.pool = nn.MaxPool2d(2,2)
         
-        self.conv1 = resnet34.conv1
-        self.bn1 = resnet34.bn1
-        self.relu = resnet34.relu
+        self.conv1 = resnet.conv1
+        self.bn1 = resnet.bn1
+        self.relu = resnet.relu
         self.maxpool = resnet.maxpool
         self.encoder1 = resnet.layer1
         self.encoder2 = resnet.layer2
