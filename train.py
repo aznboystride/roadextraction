@@ -6,6 +6,21 @@ import torch.optim as optim
 from datasets.data import Dataset
 from networks.FCN import FCN
 
+# Jaccard - Intersection Over Union
+def dice_coeff(outputs, labels):
+    intersection = torch.sum(outputs * labels)
+    sum = torch.sum(outputs + labels)
+    dice = 2. * intersection / sum
+    return dice.mean()
+
+def dice_loss(outputs, labels):
+    return 1 - dice_coeff(outputs, labels)
+
+def bce_dice(outputs, labels):
+    return nn.BCELoss()(outputs, labels) + dice_loss(outputs, labels)
+
+accuracy = lambda x, y: dice_coeff(x, y)
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 train_dir = "data/train"
 
@@ -14,7 +29,7 @@ batch_size = 2
 epochs = 5
 lr = 0.02
 is_deconv = False
-fcn_loss = nn.BCELoss()
+fcn_loss = bce_dice
 
 network = FCN(is_deconv=is_deconv).cuda()
 criterion = fcn_loss
