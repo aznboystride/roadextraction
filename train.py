@@ -1,3 +1,4 @@
+import os
 import tqdm
 import torch
 import torch.nn as nn
@@ -6,7 +7,7 @@ from datasets.data import Dataset
 from networks.FCN import FCN
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-train_dir = "train"
+train_dir = "data/train"
 
 shuffle = True
 batch_size = 8

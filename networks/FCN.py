@@ -75,7 +75,7 @@ class FCN(nn.Module):
         bn1 = self.bn1(conv1)
         relu = self.relu(bn1)
         maxpool = self.maxpool(relu)
-        encoder1 = self.encoder1(t)
+        encoder1 = self.encoder1(maxpool)
         encoder2 = self.encoder2(encoder1)
         encoder3 = self.encoder3(encoder2)
         encoder4 = self.encoder4(encoder3)
