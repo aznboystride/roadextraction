@@ -10,10 +10,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 train_dir = "data/train"
 
 shuffle = True
-batch_size = 8
+batch_size = 2
 epochs = 5
 lr = 0.02
-is_deconv = True
+is_deconv = False
 fcn_loss = nn.BCELoss()
 
 network = FCN(is_deconv=is_deconv).cuda()
@@ -35,9 +35,10 @@ for epoch in range(1, epochs+1):
     total_accuracy = 0
     for i, (image, mask) in tqdm.tqdm(enumerate(dataloader)):
         input_batch = image.to(device=device, dtype=torch.float32)
-        label_batch = image.to(device=device, dtype=torch.float32)
+        label_batch = mask.to(device=device, dtype=torch.float32)
         optimizer.zero_grad()
         output_batch = network(input_batch)
+        print(input_batch.shape, output_batch.shape, label_batch.shape)
         loss = criterion(output_batch, label_batch)
         loss.backward()
         optimizer.step()
