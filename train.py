@@ -48,6 +48,7 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size, shuffle=shuffle)
 for epoch in range(1, epochs+1):
     total_loss = 0
     total_accuracy = 0
+    counter = 0
     for i, (image, mask) in tqdm.tqdm(enumerate(dataloader)):
         input_batch = image.to(device=device, dtype=torch.float32)
         label_batch = mask.to(device=device, dtype=torch.float32)
