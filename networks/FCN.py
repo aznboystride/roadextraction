@@ -27,48 +27,46 @@ class FCN(nn.Module):
 
         self.decoder4 = DecoderBlock(
                         decoder_inputs[0],
-                        decoder_inputs[0] // 4,
                         decoder_outputs[0],
                         is_deconv=is_deconv
                     )
  
         self.decoder3 = DecoderBlock(
                         decoder_inputs[1],
-                        decoder_inputs[1] // 4,
                         decoder_outputs[1],
                         is_deconv=is_deconv
                     ) 
 
         self.decoder2 = DecoderBlock(
                         decoder_inputs[2],
-                        decoder_inputs[2] // 4,
                         decoder_outputs[2],
                         is_deconv=is_deconv
                     )
 
         self.decoder1 = DecoderBlock(
                         decoder_inputs[3],
-                        decoder_inputs[3] // 4,
                         decoder_outputs[3],
                         is_deconv=is_deconv
                     )
 
         self.last2decoder = DecoderBlock(
                         decoder_inputs[4],
-                        decoder_inputs[4] // 4,
                         decoder_outputs[4],
                         is_deconv=is_deconv
                     )
 
         self.last1decoder = DecoderBlock(
                         decoder_inputs[5],
-                        decoder_inputs[5] // 4,
                         decoder_outputs[5],
                         is_deconv=is_deconv
                     )
 
         self.final2conv = nn.Conv2d(decoder_outputs[5], decoder_outputs[5], kernel_size=3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(decoder_outputs[5])
+        self.relu2 = nn.ReLU()
         self.final1conv = nn.Conv2d(decoder_outputs[5], 1, kernel_size=1, stride=1)
+        self.bn3 = nn.BatchNorm2d(1)
+        self.relu3 = nn.ReLU()
 
     def forward(self, t):
         #print("Input {}\t->\t{}".format(t.shape, "conv1"))
@@ -104,7 +102,11 @@ class FCN(nn.Module):
         #print("Input {}\t->\t{}".format(last1decoder.shape, "last2c"))
         
         final2conv = self.final2conv(last1decoder)
+        bn2 = self.bn2(final2conv)
+        relu2 = self.relu2(bn2)
         #print("Input {}\t->\t{}".format(final2conv.shape, "last1c"))
         final1conv = self.final1conv(final2conv)
+        bn3 = self.bn3(relu2)
+        relu3 = self.relu3(bn3)
 
         return F.sigmoid(final1conv)
