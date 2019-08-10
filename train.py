@@ -62,4 +62,4 @@ for epoch in range(1, epochs+1):
         total_accuracy += accuracy(output_batch, label_batch)
         counter += 1
         if counter % 20 == 0:
-            print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} %".format(epoch, epochs, i+1, len(dataloader), total_loss / counter,total_accuracy/counter*100))
+            print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(dataloader), total_loss / counter,total_accuracy/counter))
