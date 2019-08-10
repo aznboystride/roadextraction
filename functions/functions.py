@@ -41,8 +41,8 @@ class DecoderBlock(nn.Module):
         else:
             self.block = nn.Sequential(
                 nn.Upsample(scale_factor=2, mode='nearest'),
-                ConvRelu(in_, mid),
-                ConvRelu(mid, out)
+                ConvRelu(in_, out), # bug fix later
+                ConvRelu(out, out)  # bug fix later
             )
 
     def forward(self, t):

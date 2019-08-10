@@ -28,7 +28,7 @@ shuffle = True
 batch_size = 2
 epochs = 5
 lr = 0.02
-is_deconv = False
+is_deconv = True
 fcn_loss = bce_dice
 
 network = FCN(is_deconv=is_deconv).cuda()
