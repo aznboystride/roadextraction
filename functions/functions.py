@@ -23,15 +23,20 @@ class ConvRelu(nn.Module):
         out = self.act(out)
         return out
 
+
 class DecoderBlock(nn.Module):
-    def __init__(self, in_, mid, out, is_deconv=False):
+    def __init__(self, in_, out, is_deconv=False):
         super().__init__()
         self.in_ = in_
         if is_deconv:
             self.block = nn.Sequential(
-                ConvRelu(in_, mid),
-                nn.ConvTranspose2d(mid, out, kernel_size=4,stride=2,padding=1),
+                nn.Conv2d(in_, in_//4, kernel_size=1),
+                nn.BatchNorm2d(in_//4),
+                nonlinear(), 
+                nn.ConvTranspose2d(in_//4, out, kernel_size=3, stride=2),
+                nn.BatchNorm2d(in_//4),
                 nonlinear()
+                # Maybe add more convolution layers here
             )
         else:
             self.block = nn.Sequential(
