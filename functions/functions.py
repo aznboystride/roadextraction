@@ -33,7 +33,7 @@ class DecoderBlock(nn.Module):
                 nn.Conv2d(in_, in_//4, kernel_size=1),
                 nn.BatchNorm2d(in_//4),
                 nonlinear(), 
-                nn.ConvTranspose2d(in_//4, out, kernel_size=3, stride=2),
+                nn.ConvTranspose2d(in_//4, out, kernel_size=4, stride=2, padding=1),
                 nn.BatchNorm2d(out),
                 nonlinear()
                 # Maybe add more convolution layers here
