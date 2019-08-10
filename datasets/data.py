@@ -15,10 +15,10 @@ class Dataset(torch.utils.data.Dataset):
     
     def __getitem__(self, index):
         image_path = os.path.join(self.train_dir, self.image_filenames[index])
-        image = Image.open(image_path)
+        image = Image.open(image_path)#.resize((512, 512), Image.NEAREST) # resized
         image = T.Compose([T.ToTensor()])(image)
         mask_path = os.path.join(self.train_dir, self.image_filenames[index].split('_')[0] + "_mask.png")
-        mask = self.trf(Image.open(mask_path).convert('L')) / 255
+        mask = self.trf(Image.open(mask_path).convert('L'))#.resize((512,512), Image.NEAREST).convert('L')) / 255 # resized
         return image, mask
     #torch.tensor(torch.from_numpy(np.rollaxis(image, 2, 0)), dtype=torch.int64), torch.tensor(torch.from_numpy(np.rollaxis(mask, 2, 0)), dtype=torch.int64)
     

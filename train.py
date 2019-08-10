@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from datasets.data import Dataset
 from networks.FCN import FCN
+from sys import argv
 
 # Jaccard - Intersection Over Union
 def dice_coeff(outputs, labels):
@@ -25,9 +26,9 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 train_dir = "data/train"
 
 shuffle = True
-batch_size = 2
+batch_size = int(argv[1])
 epochs = 5
-lr = 0.02
+lr = 0.001
 is_deconv = True
 fcn_loss = bce_dice
 
