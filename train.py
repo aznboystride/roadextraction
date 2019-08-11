@@ -81,7 +81,6 @@ dataset = Dataset(train_dir, image_filenames)
 train_loader, valid_loader = split_loaders(dataset)
 
 # Training
-d = 0
 for epoch in range(1, epochs+1):
     total_loss = 0
     total_accuracy = 0
@@ -89,12 +88,8 @@ for epoch in range(1, epochs+1):
     for counter, (image, mask) in enumerate(train_loader):
         if counter != 0 and counter % 20 == 0:
             print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter)) 
-        input_batch = image.to(device=device[d], dtype=torch.float32)
-        d +=1
-        label_batch = mask.to(device=device[d], dtype=torch.float32)
-        d +=1
-        if d > 3:
-            d = 0
+        input_batch = image.cuda()
+        label_batch = mask.cuda()
         optimizer.zero_grad()
         output_batch = network(input_batch)
         loss = criterion(output_batch, label_batch)
