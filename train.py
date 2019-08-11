@@ -42,6 +42,7 @@ def valid(model, loader, batch_size):
     total_loss = 0
     total_acc = 0
     counter = 1
+    model.eval()
     with torch.no_grad():
         for (input_batch, label_batch) in loader:
             input_batch = input_batch.cuda()
@@ -53,8 +54,9 @@ def valid(model, loader, batch_size):
             total_acc += accuracy(output_batch, label_batch)
             if counter % 20 == 0:
                 #print("data {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter*batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
-                print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_acc / counter)) 
+                print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
             counter += 1
+    model.train()
 
 accuracy = lambda x, y: dice_coeff(x, y)
 
@@ -107,4 +109,4 @@ for epoch in range(1, epochs+1):
     print("\nValidating...")
     valid(network, valid_loader, batch_size)
 
-torch.save(model.state_dict(), PATH)
+torch.save(network.state_dict(), PATH)
