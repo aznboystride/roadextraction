@@ -100,4 +100,4 @@ for epoch in range(1, epochs+1):
         total_accuracy += accuracy(output_batch, label_batch)
             # print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(train_loader), total_loss / counter,total_accuracy/counter))
     print("\nValidating...")
-    valid(network, valid_loader)
+    valid(network, valid_loader, batch_size)
