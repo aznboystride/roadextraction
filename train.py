@@ -35,7 +35,7 @@ def split_loaders(dataset, shuffle=True, valsplit=0.2):
     train_sampler, valid_sampler = SubsetRandomSampler(train_indices), SubsetRandomSampler(valid_indices)
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=train_sampler), torch.utils.data.DataLoader(dataset, batch_size=len(dataset), sampler=valid_sampler)
 
-def valid(model, loader):
+def valid(model, loader, batch_size):
     total_loss = 0
     total_acc = 0
     counter = 1
@@ -46,8 +46,10 @@ def valid(model, loader):
         output_batch = model(input_batch)    
         loss = criterion(output_batch, label_batch)
         total_loss += loss.item()
-        total_acc += accuracy(output_batch, label_batch) 
-        print("data {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter*batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
+        total_acc += accuracy(output_batch, label_batch)
+        if counter % 20 == 0:
+            #print("data {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter*batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
+            print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_acc / counter)) 
         counter += 1
 
 accuracy = lambda x, y: dice_coeff(x, y)
@@ -79,8 +81,10 @@ train_loader, valid_loader = split_loaders(dataset)
 for epoch in range(1, epochs+1):
     total_loss = 0
     total_accuracy = 0
-    counter = 0
-    for i, (image, mask) in tqdm.tqdm(enumerate(train_loader)):
+    print("Epoch {}/{}:".format(epoch, epochs))
+    for counter, (image, mask) in enumerate(train_loader):
+        if counter != 0 and counter % 20 == 0:
+            print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter)) 
         input_batch = image.cuda()
         label_batch = mask.cuda()
         optimizer.zero_grad()
@@ -91,8 +95,6 @@ for epoch in range(1, epochs+1):
 
         total_loss += loss.item()
         total_accuracy += accuracy(output_batch, label_batch)
-        counter += 1
-        if counter % 20 == 0:
-            print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(train_loader), total_loss / counter,total_accuracy/counter))
+            # print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(train_loader), total_loss / counter,total_accuracy/counter))
     print("\nValidating...")
     valid(network, valid_loader)
