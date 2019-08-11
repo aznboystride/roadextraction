@@ -58,10 +58,10 @@ def valid(model, loader, batch_size):
 accuracy = lambda x, y: dice_coeff(x, y)
 
 train_dir = "data/train"
-
+PATH = "fcnweights"
 shuffle = True
 batch_size = int(argv[1])
-epochs = 5
+epochs = 20
 lr = 0.001
 is_deconv = True
 fcn_loss = bce_dice
@@ -98,9 +98,12 @@ for epoch in range(1, epochs+1):
 
         total_loss += loss.item()
         total_accuracy += accuracy(output_batch, label_batch)
-        del output_batch, label_batch, input_batch
+        # torch.cuda.empty_cache() 
+        del image, mask, output_batch, label_batch, input_batch, loss
             # print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(train_loader), total_loss / counter,total_accuracy/counter))
        
     del train_loader 
     print("\nValidating...")
     valid(network, valid_loader, batch_size)
+
+torch.save(model.state_dict(), PATH)
