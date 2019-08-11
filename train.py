@@ -43,8 +43,8 @@ def valid(model, loader, batch_size):
     counter = 1
     with torch.no_grad():
         for (input_batch, label_batch) in loader:
-            input_batch = input_batch
-            label_batch = label_batch
+            input_batch = input_batch.cuda()
+            label_batch = label_batch.cuda()
             optimizer.zero_grad()
             output_batch = model(input_batch)    
             loss = criterion(output_batch, label_batch)
