@@ -15,9 +15,10 @@ device = [0, 1, 2, 3]
 
 # Jaccard - Intersection Over Union
 def dice_coeff(outputs, labels):
-    intersection = torch.cuda.torch.sum(outputs * labels)
-    sum = torch.cuda.torch.sum(outputs + labels)
-    dice = 2. * intersection / sum
+    with torch.no_grad():
+        intersection = torch.cuda.torch.sum(outputs * labels)
+        sum = torch.cuda.torch.sum(outputs + labels)
+        dice = 2. * intersection / sum
     return dice.mean()
 
 def dice_loss(outputs, labels):
@@ -67,7 +68,7 @@ is_deconv = True
 fcn_loss = bce_dice
 
 network = FCN(is_deconv=is_deconv).cuda()
-network = nn.DataParallel(network)
+network = nn.DataParallel(network, device_ids=[0,1,2,3])
 criterion = fcn_loss
 optimizer = optim.Adam(network.parameters(), lr=lr)
 
