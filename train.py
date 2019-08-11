@@ -78,12 +78,12 @@ for filename in os.listdir(train_dir):
 
 
 dataset = Dataset(train_dir, image_filenames)
-train_loader, valid_loader = split_loaders(dataset)
 
 # Training
 for epoch in range(1, epochs+1):
     total_loss = 0
     total_accuracy = 0
+    train_loader, valid_loader = split_loaders(dataset)
     print("Epoch {}/{}:".format(epoch, epochs))
     for counter, (image, mask) in enumerate(train_loader):
         if counter != 0 and counter % 20 == 0:
@@ -98,6 +98,9 @@ for epoch in range(1, epochs+1):
 
         total_loss += loss.item()
         total_accuracy += accuracy(output_batch, label_batch)
+        del output_batch, label_batch, input_batch
             # print("epoch {}/{}\tbatch {}/{}\tloss {:.5f}\taccuracy {:.5f} ".format(epoch, epochs, i+1, len(train_loader), total_loss / counter,total_accuracy/counter))
+       
+    del train_loader 
     print("\nValidating...")
     valid(network, valid_loader, batch_size)
