@@ -9,7 +9,9 @@ from sys import argv
 from torch.utils.data.sampler import SubsetRandomSampler
 import numpy as np
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+device = [0, 1, 2, 3]
 
 # Jaccard - Intersection Over Union
 def dice_coeff(outputs, labels):
@@ -85,8 +87,12 @@ for epoch in range(1, epochs+1):
     for counter, (image, mask) in enumerate(train_loader):
         if counter != 0 and counter % 20 == 0:
             print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter)) 
-        input_batch = image.cuda()
-        label_batch = mask.cuda()
+        input_batch = image.to(device=device[d], dtype=torch.float32)
+        d +=1
+        label_batch = mask.to(device=device[d], dtype=torch.float32)
+        d +=1
+        if d > 3:
+            d = 0
         optimizer.zero_grad()
         output_batch = network(input_batch)
         loss = criterion(output_batch, label_batch)
