@@ -32,10 +32,10 @@ def split_loaders(dataset, shuffle=True, valsplit=0.2):
     split = int(np.floor(size * valsplit))
     if shuffle:
         np.random.shuffle(indices)
-    train_indices = indices[:split]
-    valid_indices = indices[split:]
+    valid_indices = indices[:split]
+    train_indices = indices[split:]
     train_sampler, valid_sampler = SubsetRandomSampler(train_indices), SubsetRandomSampler(valid_indices)
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=train_sampler), torch.utils.data.DataLoader(dataset, batch_size=len(dataset), sampler=valid_sampler)
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=train_sampler), torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=valid_sampler)
 
 def valid(model, loader, batch_size):
     total_loss = 0
