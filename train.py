@@ -1,5 +1,4 @@
 import os
-import tqdm
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -12,6 +11,22 @@ import numpy as np
 #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 device = [0, 1, 2, 3]
+
+best = 0
+
+PATH = "fcnweights"
+
+train_dir = "data/train"
+
+shuffle = True
+
+batch_size = 16
+
+epochs = 5
+
+lr = 0.001
+
+is_deconv = True
 
 # Jaccard - Intersection Over Union
 def dice_coeff(outputs, labels):
@@ -39,12 +54,18 @@ def split_loaders(dataset, shuffle=True, valsplit=0.2):
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=train_sampler), torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=valid_sampler)
 
 def valid(model, loader, batch_size):
+    global best
     total_loss = 0
     total_acc = 0
     counter = 1
     model.eval()
     with torch.no_grad():
         for (input_batch, label_batch) in loader:
+            if total_acc > best:
+                print("Beat Current Best: {} -> {}".format(best, total_acc))
+                best = total_acc
+                torch.save(network.state_dict(), PATH)
+                
             input_batch = input_batch.cuda()
             label_batch = label_batch.cuda()
             optimizer.zero_grad()
@@ -60,13 +81,6 @@ def valid(model, loader, batch_size):
 
 accuracy = lambda x, y: dice_coeff(x, y)
 
-train_dir = "data/train"
-PATH = "fcnweights"
-shuffle = True
-batch_size = int(argv[1])
-epochs = 20
-lr = 0.001
-is_deconv = True
 fcn_loss = bce_dice
 
 network = FCN(is_deconv=is_deconv).cuda()
@@ -108,5 +122,3 @@ for epoch in range(1, epochs+1):
     del train_loader 
     print("\nValidating...")
     valid(network, valid_loader, batch_size)
-
-torch.save(network.state_dict(), PATH)
