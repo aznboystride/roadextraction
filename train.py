@@ -63,10 +63,10 @@ def valid(model, loader, batch_size):
     model.eval()
     with torch.no_grad():
         for (input_batch, label_batch) in loader:
-            if total_acc > best:
-                print("Beat Current Best: {} -> {}".format(best, total_acc))
-                print("Beat Current Best: {} -> {}".format(best, total_acc), file=open(train_log, 'a'))
-                best = total_acc
+            if total_acc / counter > best:
+                print("Beat Current Best: {:.5f} -> {:.5f}".format(best, total_acc / counter))
+                print("Beat Current Best: {:.5f} -> {:.5f}".format(best, total_acc / counter), file=open(train_log, 'a'))
+                best = total_acc / counter
                 torch.save(network.state_dict(), weight_path)
                 
             input_batch = input_batch.cuda()
@@ -129,3 +129,4 @@ for epoch in range(1, epochs+1):
     print("\nValidating...")
     print("\nValidating...", file=open(train_log, 'a'))
     valid(network, valid_loader, batch_size)
+
