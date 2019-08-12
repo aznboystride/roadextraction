@@ -80,7 +80,7 @@ def valid(model, loader, batch_size):
                 #print("data {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter*batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
                 print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
                 print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter), file=open(train_log, 'a')) 
-                counter += 1
+            counter += 1
     model.train()
 
 accuracy = lambda x, y: dice_coeff(x, y)
