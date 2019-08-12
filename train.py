@@ -14,7 +14,9 @@ device = [0, 1, 2, 3]
 
 best = 0
 
-PATH = "fcnweights"
+train_log = "train.log"
+
+weight_path = "fcnweight"
 
 train_dir = "data/train"
 
@@ -63,8 +65,9 @@ def valid(model, loader, batch_size):
         for (input_batch, label_batch) in loader:
             if total_acc > best:
                 print("Beat Current Best: {} -> {}".format(best, total_acc))
+                print("Beat Current Best: {} -> {}".format(best, total_acc), file=open(train_log, 'a'))
                 best = total_acc
-                torch.save(network.state_dict(), PATH)
+                torch.save(network.state_dict(), weight_path)
                 
             input_batch = input_batch.cuda()
             label_batch = label_batch.cuda()
@@ -76,7 +79,8 @@ def valid(model, loader, batch_size):
             if counter % 20 == 0:
                 #print("data {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter*batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
                 print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter)) 
-            counter += 1
+                print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(loader), total_loss / counter, total_acc / counter), file=open(train_log, 'a')) 
+                counter += 1
     model.train()
 
 accuracy = lambda x, y: dice_coeff(x, y)
@@ -102,9 +106,11 @@ for epoch in range(1, epochs+1):
     total_accuracy = 0
     train_loader, valid_loader = split_loaders(dataset)
     print("Epoch {}/{}:".format(epoch, epochs))
+    print("Epoch {}/{}:".format(epoch, epochs), file=open(train_log, 'a'))
     for counter, (image, mask) in enumerate(train_loader):
         if counter != 0 and counter % 20 == 0:
-            print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter)) 
+            print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter))
+            print("\t\tdata {}/{}\tloss {:.5f}\tacc {:.5f}".format(counter * batch_size, batch_size*len(train_loader), total_loss / counter, total_accuracy / counter), file=open(train_log, 'a')) 
         input_batch = image.cuda()
         label_batch = mask.cuda()
         optimizer.zero_grad()
@@ -121,4 +127,5 @@ for epoch in range(1, epochs+1):
        
     del train_loader 
     print("\nValidating...")
+    print("\nValidating...", file=open(train_log, 'a'))
     valid(network, valid_loader, batch_size)
